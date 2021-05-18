@@ -4,3 +4,4 @@
 
 layout: home
 ---
+Hello. Click here to view the [team formations interactive plot](../formation.html).
