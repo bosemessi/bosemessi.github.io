@@ -5,4 +5,8 @@
 layout: home
 ---
 
-[![Explore Statsbomb/Fbref Data for profiling players](./images/messi.png)](https://colab.research.google.com/drive/1b1UZLMxuXV1aNl8HBE-oQ8gtb9Nk4-3U#scrollTo=d3GMGbIhLY5r)
+Statsbomb/Fbref Data Explorer | Match Report Explorer
+:-------------------------:|:-------------------------:
+
+[![](./images/messi.png)](https://colab.research.google.com/drive/1b1UZLMxuXV1aNl8HBE-oQ8gtb9Nk4-3U#scrollTo=d3GMGbIhLY5r)  |  [![](./images/xT.png)](https://colab.research.google.com/drive/1y09NIdF2tEUdXRJ2R-APTG_DUA4E-pIM)
+
