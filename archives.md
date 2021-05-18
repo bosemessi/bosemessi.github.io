@@ -6,6 +6,7 @@ title: Archives
 This page hosts some of my old works. Clicking through the links below will basically let you relive my journey through the world of football analytics. Most of the works have been created using [Statsbomb Open Data](https://github.com/statsbomb/open-data) and Python. I have made use of a host of interactive libraries like Bokeh, Holoviews, Panel, Param etc to create these interactive html files. Enjoy !! 
 
 - Click here to view the [team formations interactive plot](./archive_posts/formation.html).
+- Click here to view the [radars of forwards playing in the top 5 European leagues in 2019/20](./archive_posts/Forwards_Radar.html).
 - Click here to view [passmaps of Barcelona for the 2014-15 season league games](./archive_posts/matchweekpassmaps201415witharrows.html).
 - Click here to view [xG vs minutes for each Barcelona game for the 2014-15 season league games](./archive_posts/matchweekxG201415.html).
 - Click here to view [data and visualizations for select UCL final matches](./archive_posts/UCL_Finals_at_a_glance.html).
