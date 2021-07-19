@@ -46,7 +46,9 @@ Once you have extracted the coordinates, you want to redraw the violin, and colo
 
 if len(statcols)>5:
     statcols = statcols[:5]
-angles = [2.0*np.pi/5*i for i in range(5)]
+len_stat = len(statcols)
+
+angles = [2.0*np.pi/len_stat*i for i in range(len_stat)]
 fig,ax = plt.subplots(figsize=(10,10))
 for i in range(len(angles)):
     angle = angles[i]
@@ -94,4 +96,4 @@ ax.text(-radius,-radius-0.5,'New idea : Distribution Radars'+'\n'+
         'Created by : Soumyajit Bose(@Soumyaj15209314)',
         fontsize=20,color='w')
 ```
-That's it. Hopefully this helps !! If you find something broken, let us know. 
+That's it. Hopefully this helps !! If you find something broken, let me know. 
