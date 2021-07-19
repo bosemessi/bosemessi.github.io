@@ -9,7 +9,7 @@ Since then, it's been quite a journey. Over the last year and a half, I have bee
 
 Anyways, radars have always fascinated me - despite their shortcomings both as a visual medium and as an evaluation tool for players. I think it's a pretty nifty compact way to showcase a lot of interesting data. The data could be indicative of style, or be an actual quantitative measure. But as a visual medium, I think they are nice. Also, the idea to put distribution plots right next to the radars was a masterstroke by Statsbomb. Showing how the entire population of players is distributed for certain stats is quite important, I think. So, I decided to investigate how these were created in Python. And I came across this library called seaborn (this is from a year and half ago). And seaborn led me to violin plots - symmetrized versions of the distributions. Really really cool looking plots - except they didn't look like violins to me. They always looked like leaves to my eyes. But I didn't think much about all of that back then. 
 
-It's only recently that this equivalency with leaves came back to haunt my mind one fine night I was trying to sleep (of course it had to be when I was trying to sleep...how else can someone's peace of mind be ruined more effectively !!) And I thought about it for a while, and then created this ![Image](https://bosemessi.github.io/images/MessiBloom.png).
+It's only recently that this equivalency with leaves came back to haunt my mind one fine night I was trying to sleep (of course it had to be when I was trying to sleep...how else can someone's peace of mind be ruined more effectively !!) And I thought about it for a while, discussed a bit with my favourite person on twitter [Jon ollington](https://twitter.com/jonollington), and then created this ![Image](https://bosemessi.github.io/images/MessiBloom.png).
 
 In this post, I will briefly describe how I created this. I quite like it, even though its mostly art, and I won't use it in professional settings. There can be tons of improvements obviously. 
 
@@ -96,4 +96,7 @@ ax.text(-radius,-radius-0.5,'New idea : Distribution Radars'+'\n'+
         'Created by : Soumyajit Bose(@Soumyaj15209314)',
         fontsize=20,color='w')
 ```
-That's it. Hopefully this helps !! If you find something broken, let me know. 
+That's it. Hopefully this helps !! If you find something broken, let me know. Also, once you get the idea here, you can create more artistic stuff like this : ![Image](https://bosemessi.github.io/images/MemphisVines.png). All you need to do is extract the coordinates from the original violin, then translate/rotate/do whatever and present it as some artform. 
+
+Finally, [Andy Rowlinson](https://twitter.com/numberstorm) (one of my favourite persons on twitter ) and the creator of the wonderful mplsoccer package - practically a god-sent gift for Pythonistas (god being Andy) has decided to add a very similar version to mplsoccer. He also allowed me to try it out first. It's called a Turbine Plot (the name probably comes from [Vinay Warrier](https://twitter.com/opunsoars); can't remember). Here is a sample ![Image](https://bosemessi.github.io/images/MessiTurbine.png). It will become public on mplsoccer pretty soon. 
+ 
