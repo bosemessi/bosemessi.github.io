@@ -19,7 +19,7 @@ The graph above is called "undirected" because the edges don't show any directio
 
 ![Image](https://bosemessi.github.io/images/dgraph.png)
 
-In football lingo, think of undirected graphs representing pass networks as representing total pass exchange between players, while directed graphs representing pass networks also distinguish between passes from A to B and passes from B to A. 
+In football pass networks lingo, think of undirected graphs as representing total pass exchange between players, while directed graphs distinguish between passes from A to B and passes from B to A. 
 
 ## Triangles
 
