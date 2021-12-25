@@ -13,11 +13,11 @@ First things first, you obviously need to download the Statsbomb open data. I pr
 
 The very first metric is the one that's often colloqiually referred to by all and sundry - triangles. How do we measure that ? Or what do we even mean by triangles ? Fortunately for us, graphs/network science can help answer that question. In fact, aspects of netwwork science will be used to construct and present all the metrics in this post. So let's take a quick detour into the world of graphs. I won't go into excruciating mathematical details. For interested readers, I have already linked the two papers I've used as references above. There are also fantastic books on this subject - Albert-Laszlo Barabasi and Mark Newman come to mind. Read up those for the full details. In short, graphs are collections of nodes and edges. Nodes, or vertices, are just points - could be real cooridnate points or some abstraction (players in football) and the edges are the lines that connect these points - could be real paths between points, or some abstraction (like passing links in football). A sample graph is shown below : 
 
-![Image](https://bosemessi.github.io/images/udgraph_.png)
+![Image](https://bosemessi.github.io/images/udgraph.png)
 
 The graph above is called "undirected" because the edges don't show any directionality - they only represent the total connection between two nodes. The graph below is "directed" because the edges show directionality :
 
-![Image](https://bosemessi.github.io/images/dgraph_.png)
+![Image](https://bosemessi.github.io/images/dgraph.png)
 
 In football lingo, think of undirected graphs representing pass networks as representing total pass exchange between players, while directed graphs representing pass networks also distinguish between passes from A to B and passes from B to A. 
 
@@ -45,4 +45,4 @@ Finally, we look at another notion of interconnectivity. This metric tries to me
 
 ![Image](https://bosemessi.github.io/images/lambda2_.png)
 
-
+Well...this brings an end to the post. Please read the original papers - they go into much more depth about everything than I do. And let me know if you have any questions. 
