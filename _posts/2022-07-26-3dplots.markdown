@@ -11,7 +11,7 @@ Let's start with some imports. If you unhide the following you will see the libr
 
 <details>
 <summary class='highlight-text-summary'>
-Code cell
+Click to expand!
 </summary>
 
 {% highlight python %}
@@ -33,20 +33,25 @@ from ipywidgets import interactive, fixed
 To draw a pitch, you need the dimensions and the coordinates of the various lines and circles etc. We are going to draw pitch with UEFA dimensions (105*68) but you can choose others too if you prefer. If you don't know the coordinates already, its easy to use to mplsoccer to know the dimensions of the pitch of your preference, as follows : 
 
 <details>
-    <summary>Click to expand!</summary>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
 
-```tsql
+{% highlight python %}
 pitch = Pitch(pitch_type = 'uefa')
 pitch.dim
-```
+{% endhighlight %}
+    
 </details>
 
 Now, if you have read the documentation, you will have noticed that to plot stuff, we need to provide some vertices and faces to create polygons and show them on an axis. So for example, take the uefa pitch outline....it has length 105 and width 68. So the vertices are [0,0,0], [105,0,0], [105,68,0] and [0,68,0] - the four corners of the pitch. The height of the pitch is zero as shown by the third coordinate in the triplets of numbers. The face is the pitch itself, delineated by the 4 vertices mentioned in order [[0,1,2,3]]. This is how you specify each object - by their vertices coordinates and by faces. The following does it for every single bits on the pitch : 
 
 <details>
-    <summary>Click to expand!</summary>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
 
-```tsql
+{% highlight python %}
 pitch_outline = np.array(
     [
         [0.0, 0.0, 0.0],
@@ -163,17 +168,17 @@ left_goal = np.array(
 )
 
 f_left_goal = [[4, 5, 6, 7], [0, 1, 5, 4], [2, 6, 7, 3], [1, 2, 6, 5]]
-
-```
+{% endhighlight %}
+    
 </details>
 
 Once the pitch coordinates are set, we move on to the actual plotting. We will first define a function called camera transform that will take two parameters (think of them as viewing angles in 3d) and return a perspective transformed image. Then we will define a viewer function where we will define our figure and axis, then call the camera transform on each set of vertices and faces and display them. The two functions are defined below.  
 
-<details>
-    <summary>Click to expand!</summary>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
 
-```tsql
-
+{% highlight python %}
 def camera_transform(params, vertices, faces, indx, ax, fc, ec):
     vertices[:, 0] = (vertices[:, 0] - 52.5) / 52.5
     vertices[:, 1] = (vertices[:, 1] - 34) / 52.5
@@ -302,8 +307,8 @@ def viewer(theta, phi):
 
 
 plt.show()
+{% endhighlight python %}
 
-```
 </details>
 
 If you set $\theta = 80 $ and $\phi = 90$ and call the viewer function,  you will get the following. 
