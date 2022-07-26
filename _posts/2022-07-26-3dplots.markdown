@@ -10,7 +10,6 @@ So, what's our objective here ? First I am going to show you how to create a 3d 
 Let's start with some imports. If you unhide the following you will see the libraries we are importing...essentially matplotlib, numpy, mpl3d by Nicolas Rougier and optionally mplsoccer by Andy Rowlinson. Oh, and ipywidgets for some interactivity (this is assuming you are using jupyter notebooks).
 
 ```{toggle}
-```
 
 import numpy as np
 import matplotlib.pyplot as plt
