@@ -12,6 +12,7 @@ Let's start with some imports. If you unhide the following you will see the libr
 <details>
     <summary>Click to expand!</summary>
     
+```python
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl3d import glm
@@ -20,6 +21,7 @@ from mpl3d.camera import Camera
 from matplotlib.collections import PolyCollection, LineCollection
 import ipywidgets as widgets
 from ipywidgets import interactive, fixed
+```
 
 </details>
 
