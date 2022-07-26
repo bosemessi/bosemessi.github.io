@@ -312,11 +312,11 @@ plt.show()
 
 </details>
 
-If you set $\theta$ = 80 and $\phi$ = 90 and call the viewer function,  you will get the following. 
+If you set theta = 80 and phi = 90 and call the viewer function,  you will get the following. 
 
 ![Image](https://bosemessi.github.io/images/pitch1.png)
 
-If you set $\theta$ = 80 and $\phi$ = 40, you will get the following.
+If you set theta = 80 and phi = 40, you will get the following.
 
 ![Image](https://bosemessi.github.io/images/pitch2.png)
 
