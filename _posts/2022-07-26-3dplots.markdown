@@ -357,7 +357,7 @@ interactive(viewer, theta=theta_vals, phi=phi_vals)
 ```
 </details>
 
-Now you can drag the sliders and change the orientation of the 3d pitch. My recommendations - keep $\theta$ fixed between 60 and 90, and just change $\phi$.
+Now you can drag the sliders and change the orientation of the 3d pitch. My recommendations - keep theta fixed between 60 and 90, and just change phi.
 
 
 ## Task 2 : Draw a straight 3d line  - a straight shot into the roof of the net. 
