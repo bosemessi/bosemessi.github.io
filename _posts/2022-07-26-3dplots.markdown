@@ -323,9 +323,11 @@ If you set theta = 80 and phi = 40, you will get the following.
 Cool, yeah ?! It definitely looks slick to me. I will leave to uncomment the two axis limit setting lines and play around with the numbers until you find something that looks good. Oh, and if you are tired of manually inputting the values, don't worry - ipywidgets got you covered. Just do the following : 
 
 <details>
-    <summary>Click to expand!</summary>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
 
-```tsql
+{% highlight python %}
 phi_vals = widgets.FloatSlider(
     value=10,
     min=0,
@@ -353,8 +355,8 @@ theta_vals = widgets.FloatSlider(
 )
 
 interactive(viewer, theta=theta_vals, phi=phi_vals)
-
-```
+{% endhighlight %}
+    
 </details>
 
 Now you can drag the sliders and change the orientation of the 3d pitch. My recommendations - keep theta fixed between 60 and 90, and just change phi.
