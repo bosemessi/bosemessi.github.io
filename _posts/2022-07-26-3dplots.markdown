@@ -557,4 +557,214 @@ Voila !!
 
 ## Task 3 : Draw a parabola  - say, a long 40 m pass. 
 
+To draw a unique straight line you only need to know about two points. To draw unique conic sections (like circles, parabolas, ellipses, hyperbolas) you need three or more. Or, you need to have special information about the points you choose. What do I mean by that ? Suppose the goalkick starts from [5.5, 24.84, 0] - so the right edge of the 6yd box. And it ends at [45, 12, 0] - so a medium-ish kick. If we assume that there is no air resistance, no spin of the ball etc, then the trajectory of the ball is given by a parabola (hence the title of this section). However, we are going to use a special point to draw the parabola....the top-most point/maximum height the ball can reach. Now, this is info you will not get from any free data source. So, you will have to eyeball this info from video footage. Say the ball reached a maximum height of 10 m from the ground. By symmetry, this is also the midpoint of the trajectory, so the coordinates of this point are [25.25, 18.42, 10]. Now we know everything we need to know. We will also assume acceleration due to gravity is 10. Some math is required to work out the trajectory completely - we need the height of the ball at every point. I will show it via the following code snippet
+
+<details>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
+
+{% highlight python %}
+x0, y0, z0, x1, y1, z1 = 5.5, 24.84, 0, 45, 12, 0
+xT,yT,zT = (x1+x0)/2, (y1+y0)/2, 10
+xx = np.linspace(x0, x1, 100)
+yy = np.linspace(y0, y1, 100)
+r = np.sqrt((xx - x0) ** 2 + (yy - y0) ** 2)
+R = np.sqrt((xT - x0) ** 2 + (yT - y0) ** 2)
+g = 10.0
+uz = np.sqrt(2 * g * (zT - z0))
+T = uz / g
+ur = R / T
+zz = uz * r / ur - 0.5 * g * (r / ur) ** 2 + z0
+
+long_pass = np.array([[xx[i], yy[i], zz[i]] for i in range(100)])
+long_pass = np.append(long_pass, long_pass[::-1], axis=0)
+f_long_pass = [[i for i in range(len(long_pass))]]
+{% endhighlight %}
+
+</details>
+
+Now we go back to using the original full-pitch camera transform function from the first part, add this long pass to the viewer function and plot out in red.
+
+<details>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
+
+{% highlight python %}
+
+phi_vals = widgets.FloatSlider(
+    value=10,
+    min=0,
+    max=360.0,
+    step=10,
+    description="Phi:",
+    disabled=False,
+    continuous_update=False,
+    orientation="horizontal",
+    readout=True,
+    readout_format=".1f",
+)
+
+theta_vals = widgets.FloatSlider(
+    value=80,
+    min=0,
+    max=180.0,
+    step=10,
+    description="Theta:",
+    disabled=False,
+    continuous_update=False,
+    orientation="horizontal",
+    readout=True,
+    readout_format=".1f",
+)
+
+
+def camera_transform(params, vertices, faces, indx, ax, fc, ec):
+    vertices[:, 0] = (vertices[:, 0] - 52.5) / 52.5
+    vertices[:, 1] = (vertices[:, 1] - 34) / 52.5
+    vertices[:, 2] = (vertices[:, 2] - 2.5 / 2) / 52.5
+    camera = Camera("perspective", params[0], params[1], scale=0.8)
+    vertices = glm.transform(vertices, camera.transform)
+
+    faces = np.array([vertices[face] for face in faces])
+    index = np.argsort(-np.mean(faces[..., 2].squeeze(), axis=-1))
+    vertices = faces[index][..., :2]
+
+    collection = PolyCollection(vertices, facecolor=fc, edgecolor=ec)
+    ax.add_collection(collection)
+
+    return ax
+
+
+def viewer(theta, phi):
+    fig = plt.figure(figsize=(12, 12))
+    ax = fig.add_axes([0, 0, 1, 1], xlim=[-1, 1], ylim=[-1, 1], aspect=1)
+    ax.axis("off")
+    ax.set_title("Plotting 3d Pitch", color="w", fontsize=20)
+    fig.set_facecolor("k")
+    ax.set_facecolor("k")
+
+    camera_transform(
+        params=[theta, phi],
+        vertices=pitch_outline.copy(),
+        faces=f_pitch_outline.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_penalty_box.copy(),
+        faces=f_right_penalty_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=left_penalty_box.copy(),
+        faces=f_left_penalty_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_6yd_box.copy(),
+        faces=f_right_6yd_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=left_6yd_box.copy(),
+        faces=f_left_6yd_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=centerline.copy(),
+        faces=f_centerline.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=centercircle.copy(),
+        faces=f_centercircle.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_arc.copy(),
+        faces=f_right_arc.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=left_arc.copy(),
+        faces=f_left_arc.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_goal.copy(),
+        faces=f_right_goal.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=left_goal.copy(),
+        faces=f_left_goal.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=long_pass.copy(),
+        faces=f_long_pass.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="tab:red",
+    )
+    plt.show()
+    
+    
+interactive(viewer, theta=theta_vals, phi=phi_vals)
+{% endhighlight %}
+
+</details>
+
+Setting the angles to theta = 80, phi = 10 produces the following
+
+![Image](https://bosemessi.github.io/images/goalkick.png)
+
+## Task 4 : Plot a dipping shot
+
 coming soon.....
