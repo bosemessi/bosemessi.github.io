@@ -320,7 +320,7 @@ If you set theta = 80 and phi = 40, you will get the following.
 
 ![Image](https://bosemessi.github.io/images/pitch2.png)
 
-Cool, yeah ?! It definitely looks slick to me. I will leave to uncomment the two axis limit setting lines and play around with the numbers until you find something that looks good. Oh, and if you are tired of manually inputting the values, don't worry - ipywidgets got you covered. Just do the following : 
+Cool, yeah ?! It definitely looks slick to me. I will leave it as a homework exercise for you to fiddle around with the two axis limit setting lines until you find something that looks good(getting rid of the extra spaces at the top and bottom). Oh, and if you are tired of manually inputting the values, don't worry - ipywidgets got you covered. Just do the following : 
 
 <details>
 <summary class='highlight-text-summary'>
