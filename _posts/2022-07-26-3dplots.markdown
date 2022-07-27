@@ -363,4 +363,198 @@ Now you can drag the sliders and change the orientation of the 3d pitch. My reco
 
 ## Task 2 : Draw a straight 3d line  - a straight shot into the roof of the net. 
 
-Coming soon.....
+Here we will need some data. You are free to collect your own data or find from some attainable source. I am going to work with some fake data here. Let's say we have a penalty, and it is smashed into the top left corner (left from the shooter's perspective) Ezequiel Garay-style. The start coordinates of the shot are [94,34,0] and the end coordinates are [105,36,2.3] (I am assuming a goal height of 2.4 meters). And it's hit so hard it just flies straight in (straight line approximation for a small part of the parabola). How do we plot this ?
+
+Well, for the most part, the code remains the same....we plot the pitch as usual like in the first part. Then we add coordinates for the shot itself and plot that. That's it....that simple once you complete the heavy-lifting in the first part. 
+
+Oh, and since it's a penalty, we don't need to plot the entire pitch. We could just plot a small area surrounding the penalty box to have a better zoomed-in view. This is a hack, a better way would be to shift the position of the camera but that will require changing a part in the source code, so unless you are prepared to do that, just follow the hack for now.
+
+We will start by re-specifying the vertices and faces of the required lines and also add the shot in.
+
+<details>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
+
+{% highlight python %}
+pitch_outline = np.array(
+    [
+        [80.0, 0.0, 0.0],
+        [105.0, 0.0, 0.0],
+        [105.0, 68.0, 0.0],
+        [80.0, 68.0, 0.0],
+    ]
+)
+f_pitch_outline = [[0, 1, 2, 3]]
+
+right_penalty_box = np.array(
+    [
+        [88.5, 13.84, 0.0],
+        [105.0, 13.84, 0.0],
+        [105.0, 54.16, 0.0],
+        [88.5, 54.16, 0.0],
+    ]
+)
+
+f_right_penalty_box = [[0, 1, 2, 3]]
+
+right_6yd_box = np.array(
+    [
+        [99.5, 24.84, 0.0],
+        [105.0, 24.84, 0.0],
+        [105.0, 43.16, 0.0],
+        [99.5, 43.16, 0.0],
+    ]
+)
+
+f_right_6yd_box = [[0, 1, 2, 3]]
+
+def int_angles(radius, h, k, line_y):
+    x1 = h + np.sqrt(radius**2 - (line_y - k) ** 2)
+    x2 = h - np.sqrt(radius**2 - (line_y - k) ** 2)
+    theta1 = np.arccos((x1 - h) / radius)
+    theta2 = np.pi - theta1
+    return theta1, theta2
+
+theta1, theta2 = int_angles(9.15, 34, 94, 88.5)
+lin1 = np.linspace(np.pi / 2 + theta1, np.pi / 2 + theta2, 200)
+right_arc = np.array(
+    [94 + 9.15 * np.cos(lin1), 34 + 9.15 * np.sin(lin1), np.zeros(200)]
+).transpose()
+
+f_right_arc = [[i for i in range(len(right_arc))]]
+
+right_goal = np.array(
+    [
+        [105, 30.34, 0.0],
+        [105, 30.34, 2.4],
+        [105, 37.66, 2.4],
+        [105, 37.66, 0],
+        [107, 30.34, 0.0],
+        [107, 30.34, 2.4],
+        [107, 37.66, 2.4],
+        [107, 37.66, 0],
+    ]
+)
+
+f_right_goal = [[4, 5, 6, 7], [0, 1, 5, 4], [2, 6, 7, 3], [1, 2, 6, 5]]
+
+x0, y0, z0, x1, y1, z1 = 94, 34, 0, 105, 36, 2.3
+
+xx = np.linspace(x0, x1, 10)
+yy = np.linspace(y0, y1, 10)
+zz = np.linspace(z0, z1, 10)
+
+shot = np.array([[xx[i], yy[i], zz[i]] for i in range(10)])
+f_shot = [[i for i in range(len(shot))]]
+
+{% endhighlight %}
+
+</details>
+
+Then we will plot everything, showing the shot in red. We need to make a tiny change in the camera transform function - re-center it and also re-normalize to display in a unit box. The code bits are given below 
+
+<details>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
+
+{% highlight python %}
+def camera_transform(params, vertices, faces, indx, ax, fc, ec):
+    vertices[:, 0] = (vertices[:, 0] - 92.5) / 12.5
+    vertices[:, 1] = (vertices[:, 1] - 34) / 12.5
+    vertices[:, 2] = (vertices[:, 2] - 2.5 / 2) / 12.5
+    camera = Camera("perspective", params[0], params[1], scale=0.8)
+    vertices = glm.transform(vertices, camera.transform)
+
+    faces = np.array([vertices[face] for face in faces])
+    index = np.argsort(-np.mean(faces[..., 2].squeeze(), axis=-1))
+    vertices = faces[index][..., :2]
+
+    collection = PolyCollection(vertices, facecolor=fc, edgecolor=ec)
+    ax.add_collection(collection)
+    return ax
+
+
+def viewer(theta, phi):
+    fig = plt.figure(figsize=(12, 12))
+    ax = fig.add_axes([0, 0, 1, 1], xlim=[-1, 1], ylim=[-1, 1], aspect=1)
+    ax.axis("off")
+    ax.set_title("Plotting 3d Pitch", color="w", fontsize=20)
+    fig.set_facecolor("k")
+    ax.set_facecolor("k")
+
+    camera_transform(
+        params=[theta, phi],
+        vertices=pitch_outline.copy(),
+        faces=f_pitch_outline.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_penalty_box.copy(),
+        faces=f_right_penalty_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_6yd_box.copy(),
+        faces=f_right_6yd_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_arc.copy(),
+        faces=f_right_arc.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_goal.copy(),
+        faces=f_right_goal.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=shot.copy(),
+        faces=f_shot.copy(),
+        indx=1,
+        ax=ax,
+        fc="tab:red",
+        ec="tab:red",
+    )
+    plt.show()
+
+{% endhighlight %}
+
+</details>
+
+Then choose your favourite angle and display, or use the ipywidgets to rotate things around and marvel at the penalty from a variety of angles.
+Choosing theta = 60 and phi = 280 produces the following
+
+![Image](https://bosemessi.github.io/images/penalty.png)
+
+Voila !!
+
+
+## Task 3 : Draw a parabola  - say, a long 40 m pass. 
+
+coming soon.....
