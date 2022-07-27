@@ -306,8 +306,7 @@ def viewer(theta, phi):
         ec="w",
     )
 
-
-plt.show()
+    plt.show()
 {% endhighlight %}
 
 </details>
