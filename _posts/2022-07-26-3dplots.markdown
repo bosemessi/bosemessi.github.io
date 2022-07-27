@@ -765,6 +765,320 @@ Setting the angles to theta = 80, phi = 10 produces the following
 
 ![Image](https://bosemessi.github.io/images/goalkick.png)
 
-## Task 4 : Plot a dipping shot
+## Task 4 : Plot shots with dip
 
-coming soon.....
+This is the final bit...plotting dipping shots. I will show you three different shots. All parabolic curves. The first one enters the goal when the ball is at its topmost point of the parabolic trajectory. The second one reaches up to the topmost point and then dips down. The third one is from close range and enters the goal without ever hitting the topmost point of the trajectory. The first two cases, you can pretty much handle them the way the long goal kick was handled. For the third case, since we do not know/have a guesstimate of the topmost point, its better to guesstimate the initial angle of the shot. Its typically going to be small (around 10-15 degrees). I will once again show the math details in the code itself...reach out if you have further questions. The inputs you need for each shot are as follows : 
+
+Shot 2 : starting point [x0, y0, z0] : [88, 25, 0]
+         ending point [x1, y1, z1] : [105, 31, 2.3]
+         topmost point is the same as the ending point
+
+Shot 2 : starting point [x0, y0, z0] : [88, 25, 0]
+         ending point [x1, y1, z1] : [105, 35, 2.3]
+         maximum height reached zT = 5
+
+Shot 3 : starting point [x0, y0, z0] : [96, 45, 0]
+         ending point [x1, y1, z1] : [105, 36, 2]
+         intial angle theta0 = np.deg2rad(12)
+
+<details>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
+
+{% highlight python %}
+pitch_outline = np.array(
+    [
+        [80.0, 0.0, 0.0],
+        [105.0, 0.0, 0.0],
+        [105.0, 68.0, 0.0],
+        [80.0, 68.0, 0.0],
+    ]
+)
+f_pitch_outline = [[0, 1, 2, 3]]
+
+right_penalty_box = np.array(
+    [
+        [88.5, 13.84, 0.0],
+        [105.0, 13.84, 0.0],
+        [105.0, 54.16, 0.0],
+        [88.5, 54.16, 0.0],
+    ]
+)
+
+f_right_penalty_box = [[0, 1, 2, 3]]
+
+right_6yd_box = np.array(
+    [
+        [99.5, 24.84, 0.0],
+        [105.0, 24.84, 0.0],
+        [105.0, 43.16, 0.0],
+        [99.5, 43.16, 0.0],
+    ]
+)
+
+f_right_6yd_box = [[0, 1, 2, 3]]
+
+def int_angles(radius, h, k, line_y):
+    x1 = h + np.sqrt(radius**2 - (line_y - k) ** 2)
+    x2 = h - np.sqrt(radius**2 - (line_y - k) ** 2)
+    theta1 = np.arccos((x1 - h) / radius)
+    theta2 = np.pi - theta1
+    return theta1, theta2
+
+theta1, theta2 = int_angles(9.15, 34, 94, 88.5)
+lin1 = np.linspace(np.pi / 2 + theta1, np.pi / 2 + theta2, 200)
+right_arc = np.array(
+    [94 + 9.15 * np.cos(lin1), 34 + 9.15 * np.sin(lin1), np.zeros(200)]
+).transpose()
+
+f_right_arc = [[i for i in range(len(right_arc))]]
+
+right_goal = np.array(
+    [
+        [105, 30.34, 0.0],
+        [105, 30.34, 2.4],
+        [105, 37.66, 2.4],
+        [105, 37.66, 0],
+        [107, 30.34, 0.0],
+        [107, 30.34, 2.4],
+        [107, 37.66, 2.4],
+        [107, 37.66, 0],
+    ]
+)
+
+f_right_goal = [[4, 5, 6, 7], [0, 1, 5, 4], [2, 6, 7, 3], [1, 2, 6, 5]]
+
+#### Shot 1
+
+x0, y0, z0, x1, y1, z1 = 88, 25, 0, 105, 31, 2.3
+xT,yT,zT = x1,y1,z1
+
+xx = np.linspace(x0, x1, 10)
+yy = np.linspace(y0, y1, 10)
+r = np.sqrt((xx - x0) ** 2 + (yy - y0) ** 2)
+R = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+g = 10.0
+uz = np.sqrt(2 * g * (zT - z0))
+T = uz / g
+ur = R / T
+zz = uz * r / ur - 0.5 * g * (r / ur) ** 2 + z0
+shot1 = np.array([[xx[i], yy[i], zz[i]] for i in range(10)])
+shot1 = np.append(shot1, shot1[::-1], axis=0)
+f_shot1 = [[i for i in range(len(shot1))]]
+
+
+#### Shot 2
+
+x0, y0, z0, x1, y1, z1 = 88, 25, 0, 105, 35, 2.3
+zT = 5
+
+xx = np.linspace(x0, x1, 10)
+yy = np.linspace(y0, y1, 10)
+r = np.sqrt((xx - x0) ** 2 + (yy - y0) ** 2)
+g = 10.0
+uz = np.sqrt(2 * g * (zT - z0))
+T = uz / g
+
+r1 = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+a = 0.5*g*T**2
+b = -uz*T
+c = z1-z0
+
+R = r1*2*a/(-b + np.sqrt(b**2 - 4*a*c))
+ur = R/T
+
+zz = uz * r / ur - 0.5 * g * (r / ur) ** 2 + z0
+shot2 = np.array([[xx[i], yy[i], zz[i]] for i in range(10)])
+shot2 = np.append(shot2, shot2[::-1], axis=0)
+f_shot2 = [[i for i in range(len(shot2))]]
+
+#### Shot 3
+
+x0, y0, z0, x1, y1, z1 = 96, 45, 0, 105, 36, 2
+theta0 = np.deg2rad(12)
+
+xx = np.linspace(x0, x1, 10)
+yy = np.linspace(y0, y1, 10)
+r = np.sqrt((xx - x0) ** 2 + (yy - y0) ** 2)
+r1  = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+g = 10.0
+u = np.sqrt(0.5*g*r1**2/(  (r1*np.tan(theta0) - (z1-z0))*(np.cos(theta0))**2) )
+
+zz =r*np.tan(theta0) - 0.5 * g * (r / (u*np.cos(theta0))) ** 2 + z0
+shot3 = np.array([[xx[i], yy[i], zz[i]] for i in range(10)])
+shot3 = np.append(shot3, shot3[::-1], axis=0)
+f_shot3 = [[i for i in range(len(shot3))]]
+{% endhighlight %}
+
+</details>
+
+Note that I am only choosing to plot a part of the pitch to zoom in onto the shots. Now comes the final plotting bit.
+
+<details>
+<summary class='highlight-text-summary'>
+Click to expand!
+</summary>
+
+{% highlight python %}
+### Plotting pitches
+
+phi_vals = widgets.FloatSlider(
+    value=10,
+    min=0,
+    max=360.0,
+    step=10,
+    description="Phi:",
+    disabled=False,
+    continuous_update=False,
+    orientation="horizontal",
+    readout=True,
+    readout_format=".1f",
+)
+
+theta_vals = widgets.FloatSlider(
+    value=80,
+    min=0,
+    max=180.0,
+    step=10,
+    description="Theta:",
+    
+    disabled=False,
+    continuous_update=False,
+    orientation="horizontal",
+    readout=True,
+    readout_format=".1f",
+)
+
+
+def camera_transform(params, vertices, faces, indx, ax, fc, ec):
+    vertices[:, 0] = (vertices[:, 0] - 92.5) / 12.5
+    vertices[:, 1] = (vertices[:, 1] - 34) / 12.5
+    vertices[:, 2] = (vertices[:, 2] - 2.5 / 2) / 12.5
+    camera = Camera("perspective", params[0], params[1], scale=0.8)
+    vertices = glm.transform(vertices, camera.transform)
+
+    faces = np.array([vertices[face] for face in faces])
+    index = np.argsort(-np.mean(faces[..., 2].squeeze(), axis=-1))
+    vertices = faces[index][..., :2]
+
+    collection = PolyCollection(vertices, facecolor=fc, edgecolor=ec)
+    ax.add_collection(collection)
+
+    ax.set_ylim(-0.5, 0.3)
+    ax.set_xlim(-2, 1.5)
+    return ax
+
+
+def viewer(theta, phi):
+    fig = plt.figure(figsize=(12, 12))
+    ax = fig.add_axes([0, 0, 1, 1], xlim=[-1, 1], ylim=[-1, 1], aspect=1)
+    ax.axis("off")
+    ax.set_title("Plotting 3d Pitch", color="w", fontsize=20)
+    fig.set_facecolor("k")
+    ax.set_facecolor("k")
+
+    camera_transform(
+        params=[theta, phi],
+        vertices=pitch_outline.copy(),
+        faces=f_pitch_outline.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_penalty_box.copy(),
+        faces=f_right_penalty_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_6yd_box.copy(),
+        faces=f_right_6yd_box.copy(),
+        indx=1,
+        ax=ax,
+        fc="grey",
+        ec="w",
+    )
+    
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_arc.copy(),
+        faces=f_right_arc.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    
+    camera_transform(
+        params=[theta, phi],
+        vertices=right_goal.copy(),
+        faces=f_right_goal.copy(),
+        indx=1,
+        ax=ax,
+        fc="none",
+        ec="w",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=shot1.copy(),
+        faces=f_shot1.copy(),
+        indx=1,
+        ax=ax,
+        fc="tab:red",
+        ec="tab:red",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=shot2.copy(),
+        faces=f_shot2.copy(),
+        indx=1,
+        ax=ax,
+        fc="tab:red",
+        ec="tab:red",
+    )
+    camera_transform(
+        params=[theta, phi],
+        vertices=shot3.copy(),
+        faces=f_shot3.copy(),
+        indx=1,
+        ax=ax,
+        fc="tab:red",
+        ec="tab:red",
+    )
+    plt.show()
+    
+    
+interactive(viewer, theta=theta_vals, phi=phi_vals)
+{% endhighlight %}
+
+</details>
+
+Setting the angles to theta = 90, phi = 170 produces the following
+
+![Image](https://bosemessi.github.io/images/threeshots.png)
+
+Play with the angles, and have fun. This brings an end to this article. There can be a ton of other things done - introducing spin, air drag effects etc - maybe I will revisit some of those in a later article. Brad (@DymondFormation) has done a full thesis of work on that so reach out to him for more details regarding shot modelling. 
+
+Finally I will end with a brief rant. I am hiding it so click and read only if you want to hear an old man ranting at the clouds...otherwise, what are you waiting for ? Open a jupyter/google colab notebook and get going...try some of these out !! Happy plotting. 
+
+
+
+## A Brief Rant
+
+<details>
+<summary class='highlight-text-summary'>
+Read a rant, or not!
+</summary>
+
+I see a ton of "interesting" advices on twitter about vizzing, and let me just say, I flat out disagree with those. Most of these are related to people trying out new stuff, new designs etc. Usually those posts will get flooded with comments like "too clever for its own good", "hard to read", "will the club analysts understand it ?" and so on and so forth. And then those designs get ditched and never resurface again. Why ? Why do you have to do everything with club analysts/future employees in mind ? Why can't viz creation be a creative process itself ? Why can't you do something for your own self ? This sort of policing especially coming from senior people/big accounts is frankly bizarre and not good at all. Every single interesting/complex chart that you see in usage today is the result of someone fiddling with the norm and pushing the boundaries a bit at some point in the past. Nothing will change until you experiment. So please keep experimenting and keep posting. Not every single thing needs to be created thinking about potential employees. Create for yourself too. Don't ask others what to create and what they want to see....do what you want to !! And I am not saying every single thing you end up creating will be gold. In fact, 99 out of the 100 things you create will probably be pretty awful. But that remaining 1 out of 100 will bang, and it would have been worth doing it. So, you know, live a bit for yourself, and create and share whatever you feel like. 
+
+
+</details>
