@@ -118,6 +118,10 @@ Finally, we take a look at game state and man advantage. It seems like game stat
 
 ![Image](https://bosemessi.github.io/images/Barcelona/COX_gspadv.png)
 
+# End
+
+That's it. This brings an end to the survival analysis case study. There are obviously tons of scope for further work here. Especially investigating the partial effects of interplay of multiple effects together - gamestate and time remaining, for eg. Or gamestate and longballs. Maybe for another day...
+
 
 
 
