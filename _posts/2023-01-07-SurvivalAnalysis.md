@@ -47,7 +47,7 @@ Guardiola slowly perfected his possession football. By the end of his tenure, it
 
 ## Tito Vilanova 2012-13
 
-Guardiola's assistant Vilanova took up the mantle after he left and carried on the good work. Then, the cruel monster named life struck - and took Tito away from us :cry: . 
+Guardiola's assistant Vilanova took up the mantle after he left and carried on the good work. Then, the cruel monster named life struck - and took Tito away from us 😢
 
 ![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2012.png)
 
@@ -92,4 +92,4 @@ The legend of 1992, from Cruyff's legendary Dream Team, joined Barcelona as a co
 We have taken a look at possession chain survival curves, using Barcelona's CL campaigns from 2008-09 onwards as a case study. We are going to use them further to check out certain factors that contribute to the ultimate demise of a possession chain. Now, you probably already have intuitive ideas as to what these factors are. Excessive verticality, usage of too many crosses, being down by a player or two, opposition high press intensity etc are all reasons why a team might or might not hold on to the ball well. To study the effect of such factors, we make use Cox Proportional Hazards model. Here are some partial dependency plots of survival curves.
 
 ![Image](https://bosemessi.github.io/images/Barcelona/COX_oHDArolling.png)
- 
+
