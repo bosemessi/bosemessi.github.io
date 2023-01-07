@@ -91,5 +91,20 @@ The legend of 1992, from Cruyff's legendary Dream Team, joined Barcelona as a co
 
 We have taken a look at possession chain survival curves, using Barcelona's CL campaigns from 2008-09 onwards as a case study. We are going to use them further to check out certain factors that contribute to the ultimate demise of a possession chain. Now, you probably already have intuitive ideas as to what these factors are. Excessive verticality, usage of too many crosses, being down by a player or two, opposition high press intensity etc are all reasons why a team might or might not hold on to the ball well. To study the effect of such factors, we make use Cox Proportional Hazards model. Here are some partial dependency plots of survival curves.
 
+The first effect is that of opposition pressure. Intuitively, we might think higher the pressure intensity, the harder it becomes to keep hold of the ball. Here I have created a metric called oHDArolling, which basically looks at 5-minute rolling averages of opposition pressure. As is shown in the following grpah, increase in oHDArolling brings the survival curve down - in other words, at any given time t, the probability of survival goes down.
+
 ![Image](https://bosemessi.github.io/images/Barcelona/COX_oHDArolling.png)
+
+Next we look at various pass types that initiate a possession chain - launches, crosses, through balls, switches etc. As is shown and probably expected, crosses, through balls and launches are risky and lead to loss of possession more often. Switches seem to have no effect at least for Barcelona. Note that this doesn't mean I am advocating against through balls or crosses. It's always a balance of risk vs reward depending on the context of the game. 
+
+![Image](https://bosemessi.github.io/images/Barcelona/COX_passtypes.png)
+
+Next we take a look at speed of play. The grpah on the left looks at average number of passes per second of possession chains. More passes seem to help retain possession better - think of quick one-twos zipping around the opposition and leaving them in the dust. The graph on the right looks at upfield speed vx. The faster you go up the pitch, the riskier it becomes and hence more difficult to retain possession. In the words of Juan Manuel Lillo, "If you play
+ the ball upfield at top speed all the time, hitting first time long balls, the ball will
+be back on top of you in seconds. Up and down, up and down . . . You have to
+ pass when the moment’s right, to the right player.""
+
+![Image](https://bosemessi.github.io/images/Barcelona/COX_speed.png)
+
+
 
