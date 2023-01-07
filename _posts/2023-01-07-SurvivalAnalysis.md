@@ -99,12 +99,26 @@ Next we look at various pass types that initiate a possession chain - launches, 
 
 ![Image](https://bosemessi.github.io/images/Barcelona/COX_passtypes.png)
 
-Next we take a look at speed of play. The grpah on the left looks at average number of passes per second of possession chains. More passes seem to help retain possession better - think of quick one-twos zipping around the opposition and leaving them in the dust. The graph on the right looks at upfield speed vx. The faster you go up the pitch, the riskier it becomes and hence more difficult to retain possession. In the words of Juan Manuel Lillo, "If you play
+Next we take a look at speed of play. The graph on the left looks at average number of passes per second of possession chains. More passes seem to help retain possession better - think of quick one-twos zipping around the opposition and leaving them in the dust. The graph on the right looks at upfield speed vx. Negative vx implies going back, high positive vx means going upfield at great speed. The faster you go up the pitch, the riskier it becomes and hence more difficult to retain possession. In the words of Juan Manuel Lillo, "If you play
  the ball upfield at top speed all the time, hitting first time long balls, the ball will
 be back on top of you in seconds. Up and down, up and down . . . You have to
  pass when the moment’s right, to the right player.""
 
 ![Image](https://bosemessi.github.io/images/Barcelona/COX_speed.png)
+
+Next we look at temporal factors - first or second half, and minutes remaining for that half. I had to switch to a logarithmic scale for the y axis. The differences are tiny for Barcelona but might be significant for other teams. And the differences are exactly as I would have expected - games typically open up in the second half, especially if some team is losing. Also, halves usually start with tranquility but as they come closer to ending, it gets more frantic. Possessing the ball becomes harder. 
+
+![Image](https://bosemessi.github.io/images/Barcelona/COX_time.png)
+
+We also take a look at some usage rates and their effects. The top two graphs show the effects of usage of certain zones of the pitch. It seems like Barcelona does better at retaining possession when the ball is in the middle of the park. Makes sense given Barcelona's most technically secure players bar Messi have always been midfielders, and even Messi spent a ton of time in the middle. The lower two graphs look at how frequently long balls usage and cross usage in possession chains lead to reduction of its survival probability.
+
+![Image](https://bosemessi.github.io/images/Barcelona/COX_usage.png)
+
+Finally, we take a look at game state and man advantage. It seems like game state has no pretty much no effect on Barcelona....they just play their usual style of "keep the ball, pass the ball". Gamestate 0 corresponds to a tie, gamestates 1 and 2 correspond to winning by 1 or more than 1 goals respectively. Gamestates 3 and 4 correspond to losing by 1 or more than 1 goals respectively. There is a minor reduction in survival probability when losing - which is what my intuition said - but seems like the effect is minor for Barcelona. However, man advantage has a massive effect. A positive man advantage increases the survival probability while being a man down reduces it significantly. Very much an expected effect.
+
+![Image](https://bosemessi.github.io/images/Barcelona/COX_gspadv.png)
+
+
 
 
 
