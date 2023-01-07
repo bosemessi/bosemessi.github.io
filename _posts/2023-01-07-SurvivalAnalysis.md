@@ -27,9 +27,11 @@ We have naturally "censored" data in football. In a clinical study context, this
 
 (vi) All other types of chain ends - tackles, interceptions, clearances etc - bring "death" to the chain, no censoring here.
 
+Now, we will be plotting "survival curves" to show the chance of a possession chain surviving beyeon time t (in seconds). Typical possession chains are very short - less than 10 seconds. The longest chains probably last for a minute or two, maybe a bit more. How do survival curves typically look like ? Well, at the beginning, since nothing has happened, chance of surviving beyond that point is 100%, so survival curves start from 1 and then slowly goes down to zero as time progresses and events keep happening. We don't know apriori what form these curves will take, so we plot a non-parametric form known as the Kaplan-Meier Survival Curve. We can also study the partial effects of various factors on the survival curve via a regression technique called Cox Proportional Hazards Model. Both of these have been implemented via the fantastic [lifelines](https://lifelines.readthedocs.io/en/latest/) package by Cam Davidson-Pilon.
+ 
 # A Journey through the pages of History 
 
-Now, perhaps that gif in the beginning was too fast for you. Here I am going to show in details the survival curves for each season separately. 
+Now, perhaps that gif in the beginning was too fast for you. Here I am going to show in details the survival curves for each season separately. These are the Kaplan-Meier survival curves I mentioned in the previous section.
 
 ## The Glory Years under Pep Guardiola from 2008-09 to 2011-12
 
@@ -43,5 +45,51 @@ Guardiola slowly perfected his possession football. By the end of his tenure, it
 
 ![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2011.png)
 
+## Tito Vilanova 2012-13
 
+Guardiola's assistant Vilanova took up the mantle after he left and carried on the good work. Then, the cruel monster named life struck - and took Tito away from us :cry: . 
 
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2012.png)
+
+## Tata Martino 2013-14
+
+Gerardo "Tata" Martino started brightly, but after a game where Barcelona were out-possessed (still won though), he faced heavy criticism. His football changed quite a bit then, lacking penetration in the final phases. 
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2013.png)
+
+## Luis Enrique from 2014-15 to 2016-17
+
+The second best Barcelona coach (in my opinion) among the coaches I saw live. Enrique started his tenure as brightly as Pep with a treble, but poor decisions hurt the end of his tenure badly. 
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2014.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2015.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2016.png)
+
+## Ernesto Valverde from 2017-18 to middle of 2019-20, Quique Setien for the rest of 2019-20
+
+The ultimate pragmatic manager, Valverde did fairly well in his Barcelona stint in getting the best out of the aging spine of the team. However, key failures in CL led to his ultimate dismissal. His replacement Setien only managed Barcelona in 2 CL games, the 2-8 drubbing at the hands of Bayern Munich an infamous blot in his career. 
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2017.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2018.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2019.png)
+
+## Ronald Koeman from 2020-21 to middle of 2021-22, Xavi from 2021-22 to 2022-23
+
+The legend of 1992, from Cruyff's legendary Dream Team, joined Barcelona as a coach. I have very mixed opinions about his campaign. After he got fired, yet another Barcelona legend, Xavi Hernandez himself, joined as the coach. However, while Barcelona has done well in the league under him, CL success remains elusive. These are the only two coaches in recent history under whom Barcelona has slipped into the Europa League after failing to clear CL group stages. 
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2020.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2021.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2022.png)
+
+# Reasons why a possession chain fail
+
+We have taken a look at possession chain survival curves, using Barcelona's CL campaigns from 2008-09 onwards as a case study. We are going to use them further to check out certain factors that contribute to the ultimate demise of a possession chain. Now, you probably already have intuitive ideas as to what these factors are. Excessive verticality, usage of too many crosses, being down by a player or two, opposition high press intensity etc are all reasons why a team might or might not hold on to the ball well. To study the effect of such factors, we make use Cox Proportional Hazards model. Here are some partial dependency plots of survival curves.
+
+![Image](https://bosemessi.github.io/images/Barcelona/COX_oHDArolling.png)
+ 
