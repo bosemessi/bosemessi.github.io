@@ -3,7 +3,7 @@ title: "Possession Chains - To survive or not to survive, that is the question."
 layout: post
 ---
 
-Let me, as is the norm, start by pointing out the inspirations for writing this post. I was having discussions with [Paul Johnson](https://twitter.com/paul_johnson89) about how we could apply survival analysis in football, and he came up with this really cool idea of using survival analysis to investigate possession chains. Also, lots of Barcelona fans (myself included) are voicing dissatisfactions with how the team lacks composure and goes for unnecessary verticality especially in key Champions League games when things are not going their way - this is well documented in Domagoj Kostanjsak's article [here](https://barcafutbol.substack.com/p/how-verticality-intensity-and-defensive?utm_source=substack&utm_campaign=post_embed&utm_medium=web). I finally had the impetus to do some quick checks and finally enter the rabbit hole of survival analysis properly. If you don't care about the rest of the article, this is how Barcelona has been faring over the years in terms of retaining possession for long durations in Champions League matches (since 2008-09). 
+Let me, as is the norm in my blog posts, start by pointing out the inspirations for writing this post. I was having discussions with [Paul Johnson](https://twitter.com/paul_johnson89) about how we could apply survival analysis in football, and he came up with this really cool idea of using survival analysis to investigate possession chains. Also, lots of Barcelona fans (myself included) are voicing dissatisfactions with how the team lacks composure and goes for unnecessary verticality especially in key Champions League games when things are not going their way - this is well documented in Domagoj Kostanjsak's article [here](https://barcafutbol.substack.com/p/how-verticality-intensity-and-defensive?utm_source=substack&utm_campaign=post_embed&utm_medium=web). I finally had the impetus to do some quick checks and finally enter the rabbit hole of survival analysis properly. If you don't care about the rest of the article, this is how Barcelona has been faring over the years in terms of retaining possession for long durations in Champions League matches (since 2008-09). 
 
 ![Image](https://bosemessi.github.io/images/Barcelona/BarcelonaSurvival.gif)
 
@@ -28,3 +28,20 @@ We have naturally "censored" data in football. In a clinical study context, this
 (vi) All other types of chain ends - tackles, interceptions, clearances etc - bring "death" to the chain, no censoring here.
 
 # A Journey through the pages of History 
+
+Now, perhaps that gif in the beginning was too fast for you. Here I am going to show in details the survival curves for each season separately. 
+
+## The Glory Years under Pep Guardiola from 2008-09 to 2011-12
+
+Guardiola slowly perfected his possession football. By the end of his tenure, it was pretty much impossible to take the ball away from his well-drilled Barcelona machine. In the words of Sir Alex Ferguson, "... It was Iniesta and Xavi. They can keep the ball all night long."
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2008.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2009.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2010.png)
+
+![Image](https://bosemessi.github.io/images/Barcelona/KMfitBarcelona_2011.png)
+
+
+
