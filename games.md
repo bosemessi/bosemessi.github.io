@@ -73,6 +73,7 @@ A few small browser games I've built. All run peer-to-peer in your browser — n
   .tile-checkers    { --accent: #6a4c93; --accent-soft: #ece4f5; --accent-ink: #4b3470; }
   .tile-pictionary  { --accent: #1d9bf0; --accent-soft: #e1f0fb; --accent-ink: #0a5a91; }
   .tile-jigsaw      { --accent: #2a9d8f; --accent-soft: #def0ec; --accent-ink: #1c6e64; }
+  .tile-slingshot   { --accent: #f59e0b; --accent-soft: #fdf0d5; --accent-ink: #8a5a04; }
 </style>
 
 <div class="game-grid">
@@ -102,5 +103,12 @@ A few small browser games I've built. All run peer-to-peer in your browser — n
     <div class="title">Collaborative Jigsaw</div>
     <p class="desc">Solve a jigsaw puzzle together in real time.</p>
     <span class="players">1–8 players</span>
+  </a>
+
+  <a class="game-tile tile-slingshot" href="https://bosemessi.github.io/gravity_slingshot/">
+    <div class="icon">🪐</div>
+    <div class="title">Gravity Slingshot</div>
+    <p class="desc">Aim with the gravity of stars and planets. Take turns hitting the target.</p>
+    <span class="players">1–6 players</span>
   </a>
 </div>
