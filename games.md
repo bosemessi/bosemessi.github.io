@@ -74,6 +74,7 @@ A few small browser games I've built. All run peer-to-peer in your browser — n
   .tile-pictionary  { --accent: #1d9bf0; --accent-soft: #e1f0fb; --accent-ink: #0a5a91; }
   .tile-jigsaw      { --accent: #2a9d8f; --accent-soft: #def0ec; --accent-ink: #1c6e64; }
   .tile-slingshot   { --accent: #f59e0b; --accent-soft: #fdf0d5; --accent-ink: #8a5a04; }
+  .tile-pinball     { --accent: #4a6fd0; --accent-soft: #e3eafb; --accent-ink: #1f3a8a; }
 </style>
 
 <div class="game-grid">
@@ -110,5 +111,12 @@ A few small browser games I've built. All run peer-to-peer in your browser — n
     <div class="title">Gravity Slingshot</div>
     <p class="desc">Aim with the gravity of stars and planets. Take turns hitting the target.</p>
     <span class="players">1–6 players</span>
+  </a>
+
+  <a class="game-tile tile-pinball" href="https://bosemessi.github.io/space-pinball/">
+    <div class="icon">🛸</div>
+    <div class="title">Space Pinball</div>
+    <p class="desc">A pinball table among the stars. Tap to flip, hold to launch — three balls each, highest score wins.</p>
+    <span class="players">1–2 players</span>
   </a>
 </div>
