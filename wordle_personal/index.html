@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Wordle - Unlimited & Challenge</title>
+  <style>
+    :root {
+      --color-correct: #538d4e;
+      --color-present: #b59f3b;
+      --color-absent: #3a3a3c;
+      --color-empty: #121213;
+      --color-border: #3a3a3c;
+      --color-text: #ffffff;
+      --color-key: #818384;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background-color: var(--color-empty); color: var(--color-text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    
+    header { width: 100%; max-width: 500px; padding: 15px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); }
+    h1 { font-size: 1.6rem; letter-spacing: 2px; }
+    
+    .nav-btns { display: flex; gap: 8px; }
+    .btn { background: #2563eb; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+    .btn:hover { background: #1d4ed8; }
+    .btn-secondary { background: #374151; }
+    .btn-secondary:hover { background: #4b5563; }
+
+    #banner { background: #22c55e; color: black; padding: 6px 14px; font-weight: bold; border-radius: 20px; margin-top: 10px; font-size: 0.85rem; display: none; }
+
+    #board-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 10px; }
+    #board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 5px; width: 330px; height: 400px; }
+    .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .tile { border: 2px solid var(--color-border); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: bold; text-transform: uppercase; user-select: none; border-radius: 4px; }
+    
+    .tile[data-state="correct"] { background-color: var(--color-correct); border-color: var(--color-correct); }
+    .tile[data-state="present"] { background-color: var(--color-present); border-color: var(--color-present); }
+    .tile[data-state="absent"] { background-color: var(--color-absent); border-color: var(--color-absent); }
+
+    #keyboard { width: 100%; max-width: 500px; padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .key-row { display: flex; justify-content: center; gap: 6px; touch-action: manipulation; }
+    .key { background: var(--color-key); color: white; border: 0; border-radius: 4px; height: 55px; min-width: 30px; flex: 1; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; text-transform: uppercase; }
+    .key.large { flex: 1.5; font-size: 0.75rem; }
+    .key[data-state="correct"] { background-color: var(--color-correct); }
+    .key[data-state="present"] { background-color: var(--color-present); }
+    .key[data-state="absent"] { background-color: var(--color-absent); opacity: 0.5; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; padding: 20px; z-index: 10; }
+    .modal-content { background: #1e1e24; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; }
+    .modal input { width: 100%; padding: 10px; margin: 15px 0; font-size: 1.2rem; text-transform: uppercase; text-align: center; border-radius: 4px; border: 1px solid var(--color-border); background: #000; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>WORDLE</h1>
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="startNewRandomGame()">New Game</button>
+      <button class="btn" onclick="openModal()">Challenge</button>
+    </div>
+  </header>
+
+  <div id="banner">Custom Challenge Active!</div>
+
+  <div id="board-container">
+    <div id="board"></div>
+  </div>
+
+  <div id="keyboard"></div>
+
+  <!-- Challenge Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2>Challenge a Friend</h2>
+      <p style="margin-top: 8px; font-size: 0.85rem; color: #aaa;">Type a 5-letter word for your friend to guess:</p>
+      <input type="text" id="custom-word" maxlength="5" placeholder="e.g. BRAIN" />
+      <button class="btn" onclick="generateLink()" style="width: 100%;">Copy Challenge Link</button>
+      <button class="btn btn-secondary" onclick="closeModal()" style="width: 100%; margin-top: 8px;">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // Official Wordle Solution List (Expanded subset for high-quality answers)
+    const WORDS = [
+      "ABACK","ABASE","ABATE","ABBEY","ABBOT","ABHOR","ABIDE","ABLED","ABODE","ABORT","ABOUT","ABOVE","ABUSE","ABYSS","ACORN","ACRID","ACTOR","ACUTE","ADAGE","ADAPT","ADEPT","ADMIN","ADMIT","ADOBE","ADOPT","ADORE","ADORN","ADULT","AFFIX","AFIRE","AFOOT","AFOUL","AFTER","AGAIN","AGAPE","AGATE","AGENT","AGILE","AGING","AGLOW","AGONY","AGREE","AHEAD","AIDER","AISLE","ALARM","ALBUM","ALERT","ALGAE","ALIBI","ALIEN","ALIGN","ALIKE","ALIVE","ALLAY","ALLEY","ALLOT","ALLOW","ALLOY","ALOFT","ALONE","ALONG","ALOOF","ALOUD","ALPHA","ALTAR","ALTER","AMASS","AMAZE","AMBER","AMBLE","AMEND","AMISS","AMITY","AMONG","AMPLE","AMUSE","ANGEL","ANGER","ANGLE","ANGRY","ANGST","ANIME","ANKLE","ANNEX","ANNOY","ANNUL","ANODE","ANTIC","ANVIL","AORTA","APART","APHID","APEAK","APNEA","APPLE","APPLY","APRON","APTLY","ARBOR","ARDOR","ARENA","ARGUE","ARISE","ARMOR","AROMA","AROSE","ARRAY","ARROW","ARSON","ARTSY","ASCOT","ASHEN","ASIDE","ASKEW","ASSAY","ASSET","ATOLL","ATONE","ATTIC","AUDIO","AUDIT","AUGUR","AUNTY","AVAIL","AVERT","AVOID","AWAIT","AWAKE","AWARD","AWARE","AWASH","AWFUL","AWOKE","AXIAL","AXIOM","AXION","AZURE","BACON","BADGE","BADLY","BAGEL","BAGGY","BAKER","BALER","BALMY","BANAL","BANJO","BARGE","BARON","BASAL","BASIC","BASIL","BASIN","BASIS","BASTE","BATCH","BATHS","BATON","BATTY","BAYOU","BEACH","BEADY","BEARD","BEAST","BEECH","BEEFY","BEFIT","BEGAN","BEGET","BEGIN","BEGUN","BEING","BELCH","BELIE","BELLE","BELLY","BELOW","BENCH","BERET","BERRY","BERTH","BESET","BETEL","BEVEL","BEZEL","BIBLE","BICEP","BIDDER","BINGO","BIOME","BIRCH","BIRTH","BISON","BITER","BLACK","BLADE","BLAME","BLAND","BLANK","BLARE","BLAST","BLAZE","BLEAK","BLEAT","BLEED","BLEEP","BLEND","BLESS","BLIMP","BLIND","BLINK","BLISS","BLITZ","BLOAT","BLOCK","BLOKE","BLOND","BLOOD","BLOOM","BLOWN","BLUER","BLUFF","BLUNT","BLURB","BLURT","BLUSH","BOARD","BOAST","BOBBY","BONY","BONUS","BOOBY","BOOST","BOOTH","BOOTY","BOOZE","BOOZY","BORAX","BORNE","BOSSY","BOUGH","BOULE","BOUND","BOWEL","BOXER","BRACE","BRAID","BRAIN","BRAKE","BRAND","BRASS","BRAVE","BRAVO","BRAWL","BRAWN","BREAD","BREAK","BREED","BRIAR","BRIBE","BRICK","BRIDE","BRIEF","BRINE","BRING","BRINK","BRINY","BROSK","BROAD","BROIL","BROKE","BROOD","BROOK","BROOM","BROTH","BROWN","BRUNT","BRUSH","BRUTE","BUDDY","BUDGE","BUGGY","BUGLE","BUILD","BUILT","BULGE","BULKY","BULLY","BUNCH","BUNNY","BURLY","BURNT","BURST","BUSHY","BUTCH","BUTTE","BUTTER","BUYER","BUZZY","BYLAW","CABIN","CABLE","CACAO","CACHE","CACTUS","CADDY","CADET","CAGEY","CAIRN","CAMEL","CAMEO","CANAL","CANDY","CANNY","CANOE","CANON","CAPER","CAPUT","CARAT","CARGO","CAROL","CARRY","CARVE","CASTE","CATCH","CATER","CATTY","CAULK","CAUSE","CAVIL","CEASE","CEDAR","CELLO","CHAFE","CHAFF","CHAIN","CHAIR","CHALK","CHAMP","CHANT","CHAOS","CHARD","CHARM","CHART","CHASE","CHASM","CHEAP","CHEAT","CHECK","CHEEK","CHEER","CHEFS","CHESS","CHEST","CHICK","CHIDE","CHIEF","CHILD","CHILI","CHILL","CHIME","CHINA","CHIRP","CHOCK","CHOIR","CHOKE","CHORD","CHORE","CHOSE","CHUCK","CHUMP","CHUNK","CHURN","CHUTE","CIDER","CIGAR","CINCH","CIRCA","CIVIC","CIVIL","CLACK","CLAIM","CLAMP","CLANG","CLANK","CLASH","CLASP","CLASS","CLEAN","CLEAR","CLEAT","CLEFT","CLERK","CLICK","CLIFF","CLIMB","CLING","CLINK","CLOAK","CLOCK","CLONE","CLOSE","CLOTH","CLOUD","CLOUT","CLOVE","CLOWN","CLUBB","CLUCK","CLUED","CLUMP","CLUNG","COACH","COAST","COBRA","COCOA","COLON","COLOR","COMET","COMFY","COMIC","COMMY","CONCH","CONDO","CONIC","CORAL","CORNY","COUCH","COUGH","COULD","COUNT","COUPE","COURT","COVEN","COVER","COVET","COVEY","COWER","COYLY","CRACK","CRAFT","CRANE","CRANK","CRASH","CRASS","CRATE","CRAVE","CRAWL","CRAZE","CRAZY","CREAK","CREAM","CREDO","CREED","CREEK","CREEP","CREME","CREPE","CREPT","CRESS","CREST","CRICKET","CRICK","CRIED","CRIER","CRIME","CRIMP","CRISP","CROAK","CROCK","CRONE","CRONY","CROOK","CROSS","CROUP","CROWD","CROWN","CRUDE","CRUEL","CRUMB","CRUMP","CRUSH","CRUST","CRYPT","CUBIC","CUMIN","CUPID","CURIO","CURLY","CURRY","CURSE","CURVE","CURVY","CUTIE","CYBER","CYCLE","CYNIC","DADDY","DAILY","DAIRY","DAISY","DALLY","DANCE","DANDY","DATUM","DAUNT","DECAL","DECAY","DECOR","DECOY","DECRY","DEFER","DEIGN","DEITY","DELAY","DELTA","DELVE","DEMON","DEMUR","DENIM","DENSE","DEPOT","DEPTH","DERBY","DETER","DETOX","DEUCE","DEVIL","DIARY","DICEY","DIGIT","DINER","DINGO","DINGY","DIODE","DIRGE","DIRTY","DISCO","DITCH","DITTO","DITTY","DIVER","DIZZY","DODGE","DODGY","DOGMA","DOING","DOLLY","DONOR","DONUT","DOPEY","DOUBT","DOUGH","DOWDY","DOWEL","DOWNY","DOWRY","DOZEN","DRAFT","DRAIN","DRAKE","DRAMA","DRANK","DRAPE","DRAWL","DRAWN","DREAD","DREAM","DRESS","DRIED","DRIFT","DRILL","DRINK","DRIVE","DROIT","DROLL","DRONE","DROOL","DROOP","DROSS","DROVE","DROWN","DRUID","DRUNK","DRYER","DRYLY","DUCHY","DULLY","DUMMY","DUMPY","DUNCE","DUNES","DUSTY","DUTCH","DUVET","DWARF","DWELL","DWELT","EAGER","EAGLE","EARLY","EARTH","EASEL","EATEN","EATER","EBONY","ECHOES","ECLAT","EDICT","EDIFY","EERIE","EIGHT","EJECT","ELBOW","ELDER","ELECT","ELEGY","ELIXIR","ELITE","ELOPE","ELUDE","EMAIL","EMBED","EMBER","EMCEE","EMERY","EMPTY","ENACT","ENDOW","ENEMA","ENEMY","ENJOY","ENNUI","ENSUER","ENTER","ENTRY","ENVOY","EPOCH","EPOXY","EQUAL","EQUIP","ERASE","ERECT","ERODE","ERROR","ERUPT","ESSAY","ESTER","ETHER","ETHIC","ETHOS","ETUDE","EVADE","EVENLY","EVENT","EVERY","EVICT","EVOKE","EXACT","EXALT","EXAM","EXCEL","EXERT","EXILE","EXIST","EXPAT","EXPEL","EXTOL","EXTRA","EXULT","EYING","FABLE","FACET","FAINT","FAIRY","FAITH","FALSE","FANCY","FANNY","FARCE","FATAL","FATTY","FAULT","FAUNA","FAVOR","FEAST","FECAL","FEIGN","FELLA","FELON","FEMUR","FENCE","FERAL","FERRY","FETAL","FETCH","FETID","FETUS","FEVER","FEWER","FIBER","FICUS","FIELD","FIEND","FIERY","FIFTH","FIFTY","FIGHT","FILER","FILET","FILLY","FILMY","FILTH","FINAL","FINCH","FINER","FIRST","FISHY","FIXER","FIZZY","FJORD","FLACK","FLAIR","FLAKE","FLAKY","FLAME","FLANK","FLARE","FLASH","FLASK","FLECK","FLEET","FLESH","FLICK","FLIER","FLING","FLINT","FLIRT","FLOAT","FLOCK","FLOOD","FLOOR","FLORA","FLOSS","FLOUR","FLOUT","FLOWN","FLUFF","FLUID","FLUKE","FLUME","FLUNG","FLUNK","FLUSH","FLUTE","FLYER","FOAMY","FOCAL","FOCUS","FOGGY","FOIST","FOLIO","FOLK","FONDLY","FORAY","FORCE","FORGE","FORGO","FORTE","FORTH","FORTY","FORUM","FOUND","FOYER","FRAIL","FRAME","FRANK","FRAUD","FREAK","FREED","FREER","FRESH","FRIAR","FRIED","FRILL","FRISK","FRITZ","FROCK","FROND","FRONT","FROST","FROTH","FROWN","FROZE","FRUIT","FUDGE","FUGUE","FULLY","FUNKY","FUNNY","FUROR","FURRY","FUSSY","FUZZY","GAUZE","GAUDY","GAUGE","GAUNT","GAUZE","GAVEL","GAWK","GAZE","GECKO","GEESE","GENIE","GENRE","GHOST","GIANT","GIDDY","GIFTED","GIRLY","GIVEN","GIVER","GLADE","GLAND","GLARE","GLASS","GLAZE","GLEAM","GLEAN","GLIDE","GLINT","GLOAT","GLOBE","GLOOM","GLORY","GLOSS","GLOVE","GLOW","GLUEY","GLYPH","GNARL","GNOME","GOING","GOLFER","GONER","GOODY","GOOSE","GORED","GORGE","GOUGE","GOURD","GRACE","GRADE","GRAFT","GRAIL","GRAIN","GRAND","GRANT","GRAPE","GRAPH","GRASP","GRASS","GRATE","GRAVE","GRAVY","GRAZE","GREAT","GREED","GREEN","GREET","GRIEF","GRILL","GRIME","GRIMY","GRIND","GRIP","GRIST","GROAN","GROIN","GROOM","GROPE","GROSS","GROUP","GROUT","GROVE","GROWL","GROWN","GRUEL","GRUFF","GRUNT","GUARD","GUAVA","GUESS","GUEST","GUIDE","GUILD","GUILE","GUILT","GUISE","GULCH","GULLY","GUMBO","GUPPY","GUSTO","GUSTY","GYPSY","HABIT","HAIRY","HALVE","HANDY","HAPPY","HARDY","HAREM","HARPY","HARSH","HASTE","HASTY","HATCH","HATER","HAUNT","HAVEN","HAVOC","HAZEL","HEADY","HEARD","HEART","HEATH","HEAVE","HEAVY","HEDGE","HEFTY","HEIST","HELIX","HELLO","HENCE","HERON","HINGE","HIPPO","HIPPY","HITCH","HOARD","HOBBY","HOMER","HONEY","HONOR","HORDE","HORSE","HOTEL","HOUND","HOUSE","HOVEL","HOVER","HOWDY","HUMAN","HUMID","HUMOR","HUMPH","HUMUS","HUNCH","HUNKY","HURRY","HUSKY","HUTCH","HYDRO","HYENA","HYMEN","HYMNAL","ICILY","ICONIC","IDIOM","IDIOT","IDLER","IDYLL","IGLOO","ILIAC","IMAGE","IMBUE","IMPEL","INANE","INBOX","INCUR","INDEX","INEPT","INERT","INFER","GOTHA","INPUT","INTER","INRO","IRONIC","ISSUE","ITCHY","IVORY","JAZZY","JELLY","JERKY","JETTY","JEWEL","JIFFY","JOINT","JOKER","JOLLY","JOULE","JOUST","JUDGE","JUICE","JUICY","JUMBO","JUMPY","JUNTO","JUROR","KAPPA","KARMA","KAYAK","KEBAB","KHAKI","KIOSK","KNACK","KNAVE","KNEAD","KNEEL","KNELL","KNELT","KNIFE","KNOCK","KNOLL","KNOWN","KOALA","KRILL","LABEL","LABOR","LADEN","LADLE","AGER","LANCE","LANKY","LAPSE","LARVA","LASER","LATCH","LATER","LATTE","LAUGH","LAYER","LEACH","LEAFY","LEAKY","LEANT","LEAPT","LEARN","LEASE","LEASH","LEAST","LEAVE","LEDGE","LEECH","LEERY","LEFTY","LEGAL","LEGGY","LEMON","LEMUR","LEPER","LEVEL","LEVER","LIBEL","LIEGE","LIGHT","LIKEN","LILAC","LIMBO","LIMIT","LINEN","LINER","LINGO","LIPID","LITHE","LIVER","LIVID","LLAMA","LOAMY","LOATH","LOBBY","LOCAL","LOCUS","LODGE","LOFTY","LOGIC","LOGIN","LOOPY","LOOSE","LORIS","LORY","LOSER","LOUSE","LOUSY","LOVER","LOWER","LOWLY","LOYAL","LUCID","LUCKY","LUMEN","LUMPY","LUNAR","LUNCH","LUNGE","LUPUS","LURCH","LURE","LURID","LUSTY","LYMPH","LYRIC","MACAW","MACHO","MADAM","MADLY","MAFIA","MAGIC","MAGMA","MAIZE","MAJOR","MAKER","MANGO","MANIA","MANIC","MANLY","MANOR","MAPLE","MARCH","MARRY","MARSH","MASON","MATCH","MATEY","MAUVE","MAXIM","MAYBE","MAYOR","MEALY","MEANT","MEATY","MEDAL","MEDIA","MEDIC","MEET","MELON","MERCY","MERGE","MERIT","MERRY","METRO","MICRO","MIDGE","MIDST","MIGHT","MILKY","MIMIC","MINCE","MINER","MINIM","MINOR","MINTY","MINUS","MIRTH","MISER","MISSY","MISTY","MIXER","MODEL","MODEM","MOIST","MOLAR","MOLDY","MONEY","MONTH","MOOSE","MORAL","MORON","MORPH","MOTEL","MOTIF","MOTOR","MOTTO","MOULT","MOUND","MOUNT","MOURN","MOUSE","MOUTHY","MOVER","MOVIE","MOWER","MUCKY","MUCUS","MUDDY","MULCH","MUMMY","MURAL","MURKY","MUSEUM","MUSHROOM","MUSIC","MUSKY","MUSTY","MYTHIC","NAIVE","NANNY","NASAL","NASTY","NATAL","NAVAL","NAVEL","NEEDY","NEIGH","NERDY","NERVE","NERVY","NEVER","NEWER","NEWLY","NICER","NICHE","NIECE","NIGHT","NINJA","NINTH","NOBLE","NOBLY","NOISE","NOISY","NOMAD","NOOSE","NORTH","NOSEY","NOTCH","NOVEL","NUDGE","NURSE","NUTTY","NYLON","NYMPH","OAKEN","OBESE","OCCUR","OCEAN","OCTAL","OCTET","OCTAVE","ODDER","ODDLY","OFFAL","OFFER","OFTEN","OLDEN","OLDER","OLIVE","OMEGA","ONION","ONSET","OPERA","OPINE","OPIUM","OPTIC","ORBIT","ORDER","ORGAN","OTHER","OTTER","OUNCE","OUTDO","OUTER","OUTGO","OVARY","OVATE","OVERT","OVINE","OVOID","OWING","OWNER","OXIDE","OZONE","PADDY","PAGAN","PAINT","PALER","PALSY","PANEL","PANIC","PANSY","PAPAL","PAPER","PARER","PARKA","PARRY","PARSE","PARTY","PASTA","PASTE","PASTY","PATCH","PATIO","PATSY","PATTY","PAUSE","PEACE","PEACH","PEARL","PECAN","PEDAL","PENAL","PENNY","PERCH","PERIL","PERKY","PETAL","PETTY","PHASE","PHONE","PHONY","PHOTO","PIANO","PICKY","PIECE","PIETY","PIGGY","PILOT","PINCH","PINEY","PINKY","PINTO","PIPER","PIQUE","PITCH","PITHY","PIVOT","PIXEL","PIXIE","PIZZA","PLACE","PLAID","PLAIN","PLAIT","PLANE","PLANK","PLANT","PLATE","PLAZA","PLEAD","PLEAT","PLIED","PLIER","PLUCK","PLUMB","PLUME","PLUMP","PLUNK","PLUSH","POESY","POINT","POISE","POKER","POLAR","POLKA","POLYP","POOCH","POPPY","PORCH","POSER","POSIT","POSSE","POUCH","POUND","POWER","PRANK","PRAWN","PREEN","PRESS","PRICE","PRICK","PRIDE","PRIEST","PRIMO","PRINT","PRIOR","PRISM","PRIVY","PRIZE","PROBE","PRONE","PRONG","PROOF","PROSE","PROUD","PROVE","PROWL","PROXY","PRUDE","PRUNE","PSALM","PUBIC","PUDGY","PUFFY","PULPY","PULSE","PUNCH","PUPIL","PUPPY","PUREE","PURER","PURGE","PURSE","PUSHY","PUTTY","PYGMY","QUACK","QUAIL","QUAKE","QUALM","QUARK","QUART","QUASH","QUASI","QUEEN","QUEER","QUELL","QUERY","QUEST","QUEUE","QUICK","QUIET","QUILL","QUILT","QUIRK","QUITE","QUOTA","QUOTE","QUOTH","RABBI","RABID","RACER","RADAR","RADII","RADIO","RAINY","RAISE","RAJAH","RALLY","RALPH","RAMEN","RANCH","RANDY","RANGE","RAPID","RARER","RASPY","RATIO","RATTY","RAVEN","RAYON","RAZOR","REACH","REACT","READI","READY","REALM","REARM","REBAR","REBEL","REBUS","REBUT","RECAP","RECUR","REDOX","REEDY","REFER","REFIT","REGAL","REHAB","REIGN","RELAX","RELAY","RELIC","REMIT","RENAL","RENEW","REPAY","REPEL","REPLY","RERUN","RESET","RESIN","RETRO","RETRY","REUSE","REVEL","REVUE","RHINO","RHYME","RIDER","RIDGE","RIFLE","RIGHT","RIGID","RIGOR","RINSE","RIPEN","RIPER","RISEN","RISER","RISKY","RIVAL","RIVER","RIVET","ROACH","ROAST","ROBIN","ROBOT","ROCKY","RODEO","ROGER","ROGUE","ROOMY","ROOST","ROTOR","ROUGE","ROUND","ROUSE","ROUTE","ROVER","ROWER","ROYAL","RUDDER","RUDDY","RUDER","RUGBY","RULER","RUMBA","RUMOR","RUPEE","RURAL","RUSTIC","RUSTY","SADLY","SAFER","SAINT","SALAD","SALON","SALSA","SALTY","SALVE","SALVO","SANDY","SANER","SAPPER","SASSY","SATIN","SATYR","SAUCE","SAUCY","SAUNA","SAUTE","SAVOR","SAVVY","SCALD","SCALE","SCALP","SCANT","SCARE","SCARF","SCARY","SCENE","SCENT","SCOFF","SCOLD","SCONE","SCOOP","SCOPE","SCORE","SCORN","SCOUR","SCOUT","SCOWL","SCRAP","SCREW","SCRUB","SCRUM","SCUBA","SEDAN","SEEDY","SEGUE","SEIZE","SEMEN","SENSE","SEPIA","SERIF","SERUM","SERVE","SETUP","SEVEN","SEWER","SHACK","SHADE","SHADY","SHAFT","SHAKE","SHAKY","SHALE","SHALL","SHALT","SHAME","SHANK","SHAPE","SHARD","SHARE","SHARK","SHARP","SHAVE","SHAWL","SHEAR","SHEEN","SHEEP","SHEER","SHEET","SHEIK","SHELF","SHELL","SHIED","SHIFT","SHINE","SHINY","SHIRE","SHIRK","SHIRT","SHOAL","SHOCK","SHONE","SHOOT","SHORE","SHORN","SHORT","SHOUT","SHOVE","SHOWN","SHOWY","SHREW","SHRUB","SHRUG","SHUCK","SHUNT","SHUSH","HYMN","SIBLING","SIC","SIEGE","SIEVE","SIGHT","SIGMA","SILKY","SILLY","SINCE","SINEW","SINGE","SIREN","SULLY","SIXTH","SIXTY","SKATE","SKIER","SKIFF","SKILL","SKIMP","SKIRT","SKULK","SKULL","SKUNK","SLACK","SLAIN","SLANG","SLANT","SLASH","SLATE","SLEEK","SLEEP","SLEET","SLEPT","SLICE","SLICK","SLIDE","SLIME","SLIMY","SLING","SLINK","SLOOP","SLOPE","SLOSH","SLOTH","SLUMP","SLUNG","SLUNK","SLURP","SLUSH","SLYLY","SMACK","SMALL","SMART","SMASH","SMEAR","SMELL","SMELT","SMILE","SMIRK","SMITE","SMITH","SMOCK","SMOKE","SMOKY","SMOTE","SNACK","SNAIL","SNAKE","SNAKY","SNARE","SNARL","SNEAK","SNEER","SNIDE","SNIFF","SNIPE","SNOOT","SNORE","SNORT","SNOUT","SNOWY","SNUCK","SNUFF","SOAPY","SOBER","SOCKS","SODA","SOFA","SOFTLY","SOIL","SOLAR","SOLDIER","SOLVE","SONAR","SONIC","SOOTHY","SOPRANO","SORRY","SOUND","SOUTH","SOWER","SPACE","SPADE","SPANAN","SPANK","SPARE","SPARK","SPASM","SPAT","SPAWN","SPEAK","SPEAR","SPECK","SPEED","SPELL","SPELT","SPEND","SPENT","SPICE","SPICY","SPIED","SPIEL","SPIKE","SPIKY","SPILL","SPILT","SPINE","SPINY","SPIRE","SPITE","SPLIT","SPOIL","SPOKE","SPOOF","SPOOK","SPOOL","SPOON","SPORE","SPORT","SPOUT","SPRAY","SPREE","SPRIG","SPURT","SQUAD","SQUAT","SQUIB","STACK","STAFF","STAGE","STAID","STAIN","STAIR","STAKE","STALE","STALK","STALL","STAMP","STAND","STANK","STARE","STARK","START","STASH","STATE","STAVE","STEAD","STEAK","STEAL","STEAM","STEED","STEEL","STEEP","STEER","STEIN","STERN","STICK","STIFF","STILL","STILT","STING","STINK","STINT","STOCK","STOIC","STOKE","STOLE","STOMP","STONE","STONY","STOOD","STOOL","STOOP","STORE","STORK","STORM","STORY","STOUT","STOVE","STRAP","STRAW","STRAY","STRIP","STRUT","STUCK","STUDY","STUFF","STUMP","STUNG","STUNT","STYLE","SUAVE","SUGAR","SUITE","SULKY","SULLEN","SUMAC","SUPER","SURELY","SURGE","SURLY","SUSHI","SWAMI","SWAMP","SWARM","SWATH","SWEAR","SWEAT","SWEEP","SWEET","SWELL","SWEPT","SWIFT","SWILL","SWINE","SWING","SWIRL","SWISH","SWOON","SWOOP","SWORD","SWORE","SWORN","SWUNG","SYNOD","TABBY","TABLE","TABOO","TACIT","TACKY","TAFFY","TAINT","TAKEN","TAKER","TALLY","TALON","TAMER","TANGO","TANGY","TAPER","TAPIR","TARDY","TAROT","TASTE","TASTY","TATTY","TAUNT","TAWNY","TEACH","TEARY","TEASE","TEDDY","TEETH","TEMPO","TENET","TENOR","TENSE","TENTH","TEPEE","EPIC","TERSE","TESTY","THANK","THEFT","THEIR","THEME","THERE","THESE","ETHOS","THICK","THIEF","THIGH","THING","THINK","THIRD","THONG","THORN","THOSE","THREE","THREW","THROB","THROW","THUMBY","THUMP","THYME","TIARA","TIBIA","TIDAL","TIGER","TIGHT","TILDE","TIMER","TIMID","TIPSY","TITAN","TITHE","TITLE","TOAST","TODAY","TOKEN","TONAL","TONGS","TONIC","TOOTH","TOPAZ","TOPIC","TORCH","TORSO","TORUS","TOTAL","TOTEM","TOUCH","TOUGH","TOWEL","TOWER","TOXIC","TOXIN","TRACE","TRACK","TRACT","TRADE","TRAIL","TRAIN","TRAIT","TRAMP","TRASH","TRAWL","TREAD","TREAT","TREND","TRIAD","TRIAL","TRIBE","TRICE","TRICK","TRIED","TRIPE","TRITE","TROLL","TROOP","TROPE","TROUT","TROVE","TRUCE","TRUCK","TRULY","TRUMP","TRUNK","TRUSS","TRUST","TRUTH","TRYST","TUBAL","TUBER","TULIP","TULLE","TUMOR","TUNIC","TURBO","TUTOR","TWANG","TWEAK","TWEED","TWEET","TWICE","TWINE","TWIRL","TWIST","TWIXT","TYING","ULCER","ULTRA","UMBRA","UNCLE","UNCAP","UNDER","UNDUE","UNFED","FIT","UNIFY","UNION","UNIQUE","UNITY","UNMET","UNTIE","UNTIL","UNWED","UNZIP","UPPER","UPSET","URBAN","URINE","USAGE","USHER","USING","USUAL","USURP","UTTER","VAGUE","VALET","VALID","VALOR","VALUE","VALVE","VAPID","VAPOR","VAULT","VAUNT","VEGAN","VENOM","VENUE","VERGE","VERVE","VICAR","VIDEO","VIGIL","VIGOR","VILLA","VINYL","VIOLA","VIPER","VIRAL","VIRUS","VISIT","VISOR","VISTA","VITAL","VIVID","VIXEN","VOCAL","VODKA","VOGUE","VOICE","VOILA","VOMIT","VOTER","VOUCH","VOWEL","VYING","WACKY","WAFER","WAGER","WAGON","WAIST","WAIVE","WALTZ","FAUNA","WASTE","WATCH","WATER","WAVER","WAXEN","WEARY","WEAVE","WEDGE","WEEDY","WEIGH","WEIRD","WELSH","WHACK","WHALE","WHARF","WHEAT","WHEEL","WHELP","WHERE","WHICH","WHIFF","WHILE","WHINE","WHINY","WHIRL","WHISK","WHITE","WHOLE","WHOOP","WHOSE","WIDEN","WIDER","WIDOW","WIDTH","WIELD","WIMPY","WINCE","WINCH","WINDY","WISER","WISPY","WITCH","WITTY","WOKEN","WOMAN","WOMEN","WOODY","WOOER","WOOLY","WOOZY","WORDY","WORLD","WORRY","WORSE","WORST","WORTH","WOULD","WOUND","WOVEN","WRACK","WRATH","WREAK","WRECK","WREST","WRING","WRIST","WRITE","WRONG","WROTE","WRUNG","WRYLY","YACHT","YEARN","YEAST","YIELD","YOUNG","YOUTH","ZEBRA","ZESTY","ZILCH","ZINCY","ZONAL"
+    ];
+
+    let secretWord = "";
+    let currentRow = 0;
+    let currentTile = 0;
+    let isGameOver = false;
+    const maxTries = 6;
+    const wordLength = 5;
+
+    // Check URL parameter (?w=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const customChallenge = urlParams.get('w');
+
+    function initGame() {
+      if (customChallenge && !secretWord) {
+        try {
+          const decoded = atob(customChallenge).toUpperCase();
+          if (decoded.length === 5) {
+            secretWord = decoded;
+            document.getElementById('banner').style.display = 'block';
+          } else {
+            pickRandomWord();
+          }
+        } catch(e) {
+          pickRandomWord();
+        }
+      } else if (!secretWord) {
+        pickRandomWord();
+      }
+
+      resetBoardAndKeyboard();
+    }
+
+    function pickRandomWord() {
+      document.getElementById('banner').style.display = 'none';
+      const randomIndex = Math.floor(Math.random() * WORDS.length);
+      secretWord = WORDS[randomIndex];
+    }
+
+    function startNewRandomGame() {
+      // Clear URL parameter without reloading
+      if (window.location.search) {
+        window.history.pushState({}, document.title, window.location.pathname);
+      }
+      secretWord = "";
+      pickRandomWord();
+      resetBoardAndKeyboard();
+    }
+
+    function resetBoardAndKeyboard() {
+      currentRow = 0;
+      currentTile = 0;
+      isGameOver = false;
+
+      // Render Board
+      const board = document.getElementById('board');
+      board.innerHTML = '';
+      for (let i = 0; i < maxTries; i++) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        for (let j = 0; j < wordLength; j++) {
+          const tile = document.createElement('div');
+          tile.className = 'tile';
+          tile.id = `tile-${i}-${j}`;
+          row.appendChild(tile);
+        }
+        board.appendChild(row);
+      }
+
+      // Render Keyboard
+      const keyboardLayout = [
+        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+        ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+        ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "DEL"]
+      ];
+      const keyboardContainer = document.getElementById('keyboard');
+      keyboardContainer.innerHTML = '';
+
+      keyboardLayout.forEach(rowKeys => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'key-row';
+        rowKeys.forEach(key => {
+          const btn = document.createElement('button');
+          btn.className = `key ${key.length > 1 ? 'large' : ''}`;
+          btn.innerText = key;
+          btn.setAttribute('data-key', key);
+          btn.onclick = () => handleInput(key);
+          rowDiv.appendChild(btn);
+        });
+        keyboardContainer.appendChild(rowDiv);
+      });
+    }
+
+    // Keyboard Events
+    document.addEventListener('keydown', (e) => {
+      if (isGameOver) return;
+      if (e.key === 'Enter') handleInput('ENTER');
+      else if (e.key === 'Backspace') handleInput('DEL');
+      else if (/^[a-zA-Z]$/.test(e.key)) handleInput(e.key.toUpperCase());
+    });
+
+    function handleInput(key) {
+      if (isGameOver) return;
+
+      if (key === 'DEL') {
+        if (currentTile > 0) {
+          currentTile--;
+          const tile = document.getElementById(`tile-${currentRow}-${currentTile}`);
+          tile.innerText = '';
+        }
+      } else if (key === 'ENTER') {
+        if (currentTile === wordLength) {
+          submitGuess();
+        } else {
+          alert("Not enough letters");
+        }
+      } else if (currentTile < wordLength) {
+        const tile = document.getElementById(`tile-${currentRow}-${currentTile}`);
+        tile.innerText = key;
+        currentTile++;
+      }
+    }
+
+    function submitGuess() {
+      let guess = "";
+      for (let j = 0; j < wordLength; j++) {
+        guess += document.getElementById(`tile-${currentRow}-${j}`).innerText;
+      }
+
+      const letterCounts = {};
+      for (let char of secretWord) {
+        letterCounts[char] = (letterCounts[char] || 0) + 1;
+      }
+
+      const states = Array(wordLength).fill('absent');
+
+      // Pass 1: Correct positions (Green)
+      for (let j = 0; j < wordLength; j++) {
+        if (guess[j] === secretWord[j]) {
+          states[j] = 'correct';
+          letterCounts[guess[j]]--;
+        }
+      }
+
+      // Pass 2: Present letters (Yellow)
+      for (let j = 0; j < wordLength; j++) {
+        if (states[j] !== 'correct' && secretWord.includes(guess[j]) && letterCounts[guess[j]] > 0) {
+          states[j] = 'present';
+          letterCounts[guess[j]]--;
+        }
+      }
+
+      // Render Updates
+      for (let j = 0; j < wordLength; j++) {
+        const tile = document.getElementById(`tile-${currentRow}-${j}`);
+        tile.setAttribute('data-state', states[j]);
+
+        const keyBtn = document.querySelector(`button[data-key="${guess[j]}"]`);
+        const currentState = keyBtn.getAttribute('data-state');
+        if (states[j] === 'correct' || (states[j] === 'present' && currentState !== 'correct')) {
+          keyBtn.setAttribute('data-state', states[j]);
+        } else if (!currentState) {
+          keyBtn.setAttribute('data-state', 'absent');
+        }
+      }
+
+      if (guess === secretWord) {
+        alert("🎉 Excellent! You solved it!");
+        isGameOver = true;
+      } else if (currentRow === maxTries - 1) {
+        alert(`Game Over! The word was: ${secretWord}`);
+        isGameOver = true;
+      } else {
+        currentRow++;
+        currentTile = 0;
+      }
+    }
+
+    // Modal & Link Generation
+    function openModal() { document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+    function generateLink() {
+      const wordInput = document.getElementById('custom-word').value.trim().toUpperCase();
+      if (wordInput.length !== 5 || !/^[A-Z]+$/.test(wordInput)) {
+        alert("Please enter a valid 5-letter word.");
+        return;
+      }
+      
+      const encodedWord = btoa(wordInput);
+      const challengeUrl = `${window.location.origin}${window.location.pathname}?w=${encodedWord}`;
+      
+      navigator.clipboard.writeText(challengeUrl);
+      alert("Challenge link copied! Send it to your friends.");
+      closeModal();
+    }
+
+    // Start on load
+    initGame();
+  </script>
+</body>
+</html>
